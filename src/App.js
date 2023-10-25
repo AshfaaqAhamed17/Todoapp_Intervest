@@ -1,24 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import axios from "axios";
+import Todo from "./components/Todo";
+import MyTodoList from "./components/MyTodoList";
 
 function App() {
+  const [loading, setLoading] = useState(true);
+  const [todos, setTodos] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("https://jsonplaceholder.typicode.com/todos?_limit=10")
+      .then((res) => {
+        console.log(res.data);
+        setTodos(res.data);
+        setLoading(false);
+      });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <>
+      {loading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
+          <MyTodoList todos={todos} />
+        </>
+      )}
+    </>
   );
 }
 
