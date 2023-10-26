@@ -2,22 +2,24 @@ import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
-import Todo from "./components/Todo";
 import MyTodoList from "./components/MyTodoList";
+import { useDispatch } from "react-redux";
+import { fetchTodo } from "./redux/action/todoAction";
+import { Typography } from "@mui/material";
 
 function App() {
   const [loading, setLoading] = useState(true);
-  const [todos, setTodos] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     axios
-      .get("https://jsonplaceholder.typicode.com/todos?_limit=10")
+      .get("https://jsonplaceholder.typicode.com/todos?_limit=5")
       .then((res) => {
         console.log(res.data);
-        setTodos(res.data);
+        dispatch(fetchTodo(res.data));
         setLoading(false);
       });
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
@@ -34,7 +36,17 @@ function App() {
         </Box>
       ) : (
         <>
-          <MyTodoList todos={todos} />
+          {/* <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh",
+            }}
+          > */}
+
+          <MyTodoList />
+          {/* </Box> */}
         </>
       )}
     </>
