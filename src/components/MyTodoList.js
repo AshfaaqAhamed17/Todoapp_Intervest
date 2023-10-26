@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Select, MenuItem, Typography } from "@mui/material";
+import { Box, Grid, Select, MenuItem, Typography } from "@mui/material";
 import TodoItem from "./TodoItem";
 import AddTodo from "./AddTodo";
 import { useSelector } from "react-redux";
@@ -24,35 +24,33 @@ export default function MyTodoList() {
 
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          backgroundColor: "#f5f5f5",
-        }}
-      >
-        <Typography variant="h3" textAlign="center" my={2}>
-          Todo App
-        </Typography>
-        <Box
-          sx={{ display: "flex", gap: 12, justifyContent: "flex-end", pt: 2 }}
-        >
+      <Typography variant="h5" fontWeight={"bold"} textAlign="center" my={2}>
+        My Todo List
+      </Typography>
+      <Box display={"flex"} justifyContent={"space-between"} mt={5} gap={2}>
+        <Box width={"100%"}>
           <AddTodo />
-          <Select
-            onChange={handleFilterChange}
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={filter}
-            sx={{ minWidth: 180, borderRadius: "10px" }}
-          >
-            <MenuItem value="All">All</MenuItem>
-            <MenuItem value="Completed">Completed Todos</MenuItem>
-            <MenuItem value="Active">Active Todos</MenuItem>
-          </Select>
         </Box>
+        <Select
+          onChange={handleFilterChange}
+          labelId="filter-select-label"
+          id="filter-select"
+          value={filter}
+          size="small"
+          color="primary"
+          sx={{ minWidth: 180 }}
+        >
+          <MenuItem value="All">All</MenuItem>
+          <MenuItem value="Completed">Completed Todos</MenuItem>
+          <MenuItem value="Active">Active Todos</MenuItem>
+        </Select>
+      </Box>
+      <Box
+        px={1}
+        py={2}
+        mt={2}
+        sx={{ background: "#f9f9f9", borderRadius: "10px" }}
+      >
         <TodoItem todos={filteredTodos} />
       </Box>
     </>

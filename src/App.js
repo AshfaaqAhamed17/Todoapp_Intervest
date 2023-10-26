@@ -13,6 +13,7 @@ function App() {
 
   useEffect(() => {
     axios
+      // https://jsonplaceholder.typicode.com/users/1/todos
       .get("https://jsonplaceholder.typicode.com/todos?_limit=5")
       .then((res) => {
         console.log(res.data);
@@ -36,17 +37,14 @@ function App() {
         </Box>
       ) : (
         <>
-          {/* <Box
+          <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100vh",
+              width: "50%",
+              margin: "auto",
             }}
-          > */}
-
-          <MyTodoList />
-          {/* </Box> */}
+          >
+            <MyTodoList />
+          </Box>
         </>
       )}
     </>

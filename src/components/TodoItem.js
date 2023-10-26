@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
-  Typography,
+  Divider,
   Checkbox,
+  Typography,
   Dialog,
+  IconButton,
   DialogActions,
   DialogContent,
   DialogContentText,
@@ -121,47 +123,57 @@ export default function TodoItem({ todos }) {
         <Typography>No Todos</Typography>
       ) : (
         todos.map((todo) => (
-          <Box
-            key={todo.id}
-            my={2}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box display="flex" alignItems="center">
-              <Checkbox
-                checked={todo.completed}
-                onChange={() => handleCompletedToggle(todo.id, todo.completed)}
-              />
-              <Typography
-                variant="body1"
-                sx={{
-                  textDecoration: todo.completed ? "line-through" : "none",
-                  color: todo.completed ? "#a3a3a3" : "black",
-                }}
-              >
-                {todo.title}
-              </Typography>
+          <>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Box display={"flex"} alignItems="center">
+                <Checkbox
+                  checked={todo.completed}
+                  onChange={() =>
+                    handleCompletedToggle(todo.id, todo.completed)
+                  }
+                />
+                <Typography
+                  sx={{
+                    textDecoration: todo.completed ? "line-through" : "none",
+                    color: todo.completed ? "#a3a3a3" : "black",
+                    cursor: "pointer",
+                  }}
+                  variant="body2"
+                  onClick={() => handleCompletedToggle(todo.id, todo.completed)}
+                >
+                  {todo.title}
+                </Typography>
+              </Box>
+              <Box display="flex" alignItems="center">
+                <IconButton onClick={() => handleDelete(todo.id)} color="error">
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+                <IconButton onClick={() => handleEdit(todo.id)} color="primary">
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </Box>
             </Box>
-            <Box>
-              <Button onClick={() => handleDelete(todo.id)}>
-                <DeleteIcon />
-              </Button>
-              <Button onClick={() => handleEdit(todo.id)}>
-                <EditIcon />
-              </Button>
-            </Box>
-          </Box>
+            {todo.id !== todos[todos.length - 1].id && (
+              <Divider sx={{ my: 2 }} />
+            )}
+          </>
         ))
       )}
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>Edit Todo</DialogTitle>
         <DialogContent>
           <DialogContentText>
             <TextField
+              style={{ marginTop: "0.5rem" }}
               fullWidth
+              autoFocus
               variant="outlined"
+              multiline
               label="Edit Todo"
               value={editedTodo ? editedTodo.title : ""}
               onChange={(e) =>
@@ -174,7 +186,11 @@ export default function TodoItem({ todos }) {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleSaveEdit} color="primary">
+          <Button
+            disabled={!editedTodo || editedTodo.title === ""}
+            onClick={handleSaveEdit}
+            color="success"
+          >
             Save
           </Button>
         </DialogActions>

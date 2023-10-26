@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input, Box, Button } from "@mui/material";
+import { TextField, Box, Button } from "@mui/material";
 import { useDispatch } from "react-redux";
 
 export default function AddTodo() {
@@ -29,27 +29,38 @@ export default function AddTodo() {
 
   return (
     <>
-      <Box>
-        <form onSubmit={handleSubmit}>
-          <Input
-            label="Add Todo"
-            placeholder="Add Todo"
+      <form onSubmit={handleSubmit}>
+        <Box display={"flex"} gap={1}>
+          <TextField
+            label="Enter task"
+            // sx={{ borderRadius: "50px" }}
+            InputProps={{
+              style: {
+                borderRadius: "100px",
+              },
+            }}
             name="add_todo"
-            variant="soft"
-            sx={{ mt: 2, px: 2, borderRadius: "10px" }}
+            variant="outlined"
+            size="small"
+            multiline
+            fullWidth
+            px={2}
             value={inputText}
             onChange={handleInputChange}
           />
+
           <Button
-            size="lg"
+            size="small"
             type="submit"
             color="primary"
+            variant="contained"
             disabled={disableSubmit}
+            sx={{ borderRadius: "50px" }}
           >
             Add
           </Button>
-        </form>
-      </Box>
+        </Box>
+      </form>
     </>
   );
 }
