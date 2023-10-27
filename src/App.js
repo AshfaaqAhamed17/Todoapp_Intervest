@@ -5,21 +5,31 @@ import axios from "axios";
 import MyTodoList from "./components/MyTodoList";
 import { useDispatch } from "react-redux";
 import { fetchTodo } from "./redux/action/todoAction";
-import { Typography } from "@mui/material";
 
 function App() {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    axios
-      // https://jsonplaceholder.typicode.com/users/1/todos
-      .get("https://jsonplaceholder.typicode.com/todos?_limit=5")
-      .then((res) => {
-        console.log(res.data);
-        dispatch(fetchTodo(res.data));
-        setLoading(false);
-      });
+    // Check if todos exist in local storage
+    const storedTodos = JSON.parse(localStorage.getItem("todos"));
+    if (storedTodos) {
+      dispatch(fetchTodo(storedTodos));
+      setLoading(false);
+    } else {
+      axios
+        .get("https://jsonplaceholder.typicode.com/todos?_limit=5")
+        .then((res) => {
+          console.log(res.data);
+          dispatch(fetchTodo(res.data));
+          localStorage.setItem("todos", JSON.stringify(res.data));
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        });
+    }
   }, [dispatch]);
 
   return (

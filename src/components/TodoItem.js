@@ -18,6 +18,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useDispatch } from "react-redux";
 import MuiAlert from "@mui/material/Alert";
+import axios from "axios";
 
 export default function TodoItem({ todos }) {
   const dispatch = useDispatch();
@@ -45,6 +46,14 @@ export default function TodoItem({ todos }) {
       );
       setIsError(false);
       setSnackbarOpen(true);
+      localStorage.setItem(
+        "todos",
+        JSON.stringify(
+          todos.map((todo) =>
+            todo.id === id ? { ...todo, completed: !todo.completed } : todo
+          )
+        ) // todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo))
+      );
     } catch (error) {
       setSnackbarMessage("Error updating todo status.");
       setIsError(true);
@@ -62,10 +71,25 @@ export default function TodoItem({ todos }) {
     }
 
     try {
-      dispatch({ type: "DELETE_TODO", payload: id });
-      setSnackbarMessage("Todo deleted successfully!");
-      setIsError(false);
-      setSnackbarOpen(true);
+      axios
+        .delete(`https://jsonplaceholder.typicode.com/todos/${id}`)
+        .then((res) => {
+          console.log(res.data);
+          dispatch({ type: "DELETE_TODO", payload: id });
+          localStorage.setItem(
+            "todos",
+            JSON.stringify(todos.filter((todo) => todo.id !== id))
+          );
+          setSnackbarMessage("Todo deleted successfully!");
+          setIsError(false);
+          setSnackbarOpen(true);
+        })
+        .catch((err) => {
+          console.log(err);
+          setSnackbarMessage("Error deleting todo.");
+          setIsError(true);
+          setSnackbarOpen(true);
+        });
     } catch (error) {
       setSnackbarMessage("Error deleting todo.");
       setIsError(true);
@@ -85,8 +109,42 @@ export default function TodoItem({ todos }) {
   };
 
   const handleSaveEdit = () => {
+    /**
+     *     try {
+      axios
+        .put(`https://jsonplaceholder.typicode.com/todos/${editedTodo.id}`, {
+          title: editedTodo.title,
+          completed: editedTodo.completed,
+        })
+        .then((res) => {
+          console.log(res.data);
+          dispatch({ type: "UPDATE_TODO", payload: res.data });
+          setSnackbarMessage("Todo edited successfully!");
+          setIsError(false);
+          setSnackbarOpen(true);
+          setOpen(false);
+          setEditedTodo(null);
+        })
+        .catch((err) => {
+          console.log(err);
+          setSnackbarMessage("Error saving edited todo.");
+          setIsError(true);
+          setSnackbarOpen(true);
+        });
+    } catch (error) {
+      setSnackbarMessage("Error saving edited todo.");
+      setIsError(true);
+      setSnackbarOpen(true);
+    }
+     */
     try {
       dispatch({ type: "UPDATE_TODO", payload: editedTodo });
+      localStorage.setItem(
+        "todos",
+        JSON.stringify(
+          todos.map((todo) => (todo.id === editedTodo.id ? editedTodo : todo))
+        )
+      );
       setSnackbarMessage("Todo edited successfully!");
       setIsError(false);
       setSnackbarOpen(true);

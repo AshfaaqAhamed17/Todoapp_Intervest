@@ -1,8 +1,10 @@
 // todo reducer addTodo, updateTodo, deleteTodo
+const storedTodos = JSON.parse(localStorage.getItem("todos")) || [];
+
 const initialState = {
-  todos: [],
-  error: null,
+  todos: storedTodos,
 };
+
 const todoReducer = (state = initialState, action) => {
   switch (action.type) {
     case "FETCH_TODO":
