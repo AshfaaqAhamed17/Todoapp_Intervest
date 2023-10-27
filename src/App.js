@@ -20,12 +20,11 @@ function App() {
         .get("https://jsonplaceholder.typicode.com/todos?_limit=5")
         .then((res) => {
           console.log(res.data);
-          dispatch(fetchTodo(res.data));
           res.data.forEach((todo) => {
-            todo.priority = "low";
+            todo.priority = "Low";
           });
           console.log("res.data", res.data);
-
+          dispatch(fetchTodo(res.data));
           localStorage.setItem("todos", JSON.stringify(res.data));
           setLoading(false);
         })
