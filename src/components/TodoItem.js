@@ -30,6 +30,7 @@ import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrow
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import { fetchTodo } from "../redux/action/todoAction";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
 export default function TodoItem({ todos }) {
   const Android12Switch = styled(Switch)(({ theme }) => ({
@@ -66,7 +67,6 @@ export default function TodoItem({ todos }) {
   }));
 
   const dispatch = useDispatch();
-
   const [open, setOpen] = useState(false);
   const [editedTodo, setEditedTodo] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -146,6 +146,7 @@ export default function TodoItem({ todos }) {
 
   const handleEdit = (id) => {
     const todoToEdit = todos.find((todo) => todo.id === id);
+    console.log("todoToEdit", todoToEdit);
     setEditedTodo(todoToEdit);
     setOpen(true);
   };
@@ -282,6 +283,7 @@ export default function TodoItem({ todos }) {
                     >
                       {(provided, snapshot) => (
                         <Box
+                          display="flex"
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
@@ -299,116 +301,119 @@ export default function TodoItem({ todos }) {
                               : "none",
                           }}
                         >
-                          <DragHandleIcon
-                            color="primary"
-                            fontSize="small"
-                            {...provided.dragHandleProps}
-                          />
-                          <Typography
-                            variant="caption"
-                            sx={{ color: "gray", px: { xs: 1, lg: 2 } }}
-                            fontWeight={"bolder"}
-                          >
-                            {todo.createdDate
-                              ? formatDate(todo.createdDate)
-                              : "22/09/2023 - 10.09 PM"}
-                          </Typography>
-                          <Box
-                            display="flex"
-                            alignItems="start"
-                            justifyContent="space-between"
-                          >
-                            <Box display={"flex"} alignItems="start">
-                              <Tooltip
-                                title={
-                                  todo.completed
-                                    ? "Task Complete"
-                                    : "Task Incomplete"
-                                }
-                              >
-                                <FormControlLabel
-                                  control={<Android12Switch />}
-                                  checked={todo.completed}
-                                  sx={{ ml: 0.5 }}
-                                  onChange={() =>
+                          <Box margin={"auto 0"}>
+                            <DragIndicatorIcon fontSize="small" />
+                          </Box>
+                          <Box display={"block"} width={"100%"}>
+                            <Typography
+                              variant="caption"
+                              sx={{ color: "gray", px: { xs: 1, lg: 2 } }}
+                              fontWeight={"bolder"}
+                            >
+                              {todo.createdDate
+                                ? formatDate(todo.createdDate)
+                                : "22/09/2023 - 10.09 PM"}
+                            </Typography>
+                            <Box
+                              display="flex"
+                              alignItems="start"
+                              justifyContent="space-between"
+                            >
+                              <Box display={"flex"} alignItems="start">
+                                <Tooltip
+                                  title={
+                                    todo.completed
+                                      ? "Task Complete"
+                                      : "Task Incomplete"
+                                  }
+                                >
+                                  <FormControlLabel
+                                    control={<Android12Switch />}
+                                    checked={todo.completed}
+                                    sx={{ ml: 0.5 }}
+                                    onChange={() =>
+                                      handleCompletedToggle(
+                                        todo.id,
+                                        todo.completed
+                                      )
+                                    }
+                                  />
+                                </Tooltip>
+                                <Typography
+                                  sx={{
+                                    textDecoration: todo.completed
+                                      ? "line-through"
+                                      : "none",
+                                    color: todo.completed ? "#a3a3a3" : "black",
+                                    cursor: "pointer",
+                                    mt: 1,
+                                  }}
+                                  variant="body2"
+                                  onClick={() =>
                                     handleCompletedToggle(
                                       todo.id,
                                       todo.completed
                                     )
                                   }
-                                />
-                              </Tooltip>
-                              <Typography
-                                sx={{
-                                  textDecoration: todo.completed
-                                    ? "line-through"
-                                    : "none",
-                                  color: todo.completed ? "#a3a3a3" : "black",
-                                  cursor: "pointer",
-                                  mt: 1,
-                                }}
-                                variant="body2"
-                                onClick={() =>
-                                  handleCompletedToggle(todo.id, todo.completed)
-                                }
-                              >
-                                {todo.title}
-                              </Typography>
-                            </Box>
+                                >
+                                  {todo.title}
+                                </Typography>
+                              </Box>
 
-                            <Box display="flex" alignItems="center">
-                              <Tooltip
-                                title={
-                                  todo.priority === "High"
-                                    ? "High Priority"
-                                    : todo.priority === "Medium"
-                                    ? "Medium Priority"
-                                    : "Low Priority"
-                                }
-                              >
-                                <Box
-                                  px={1}
-                                  pt={1}
-                                  mr={0.5}
-                                  sx={{
-                                    background: "#fff",
-                                    borderRadius: "100px",
-                                  }}
+                              <Box display="flex" alignItems="center">
+                                <Tooltip
+                                  title={
+                                    todo.priority === "High"
+                                      ? "High Priority"
+                                      : todo.priority === "Medium"
+                                      ? "Medium Priority"
+                                      : "Low Priority"
+                                  }
                                 >
-                                  {todo.priority === "High" ? (
-                                    <KeyboardDoubleArrowUpIcon
-                                      color="error"
-                                      fontSize="small"
-                                    />
-                                  ) : todo.priority === "Medium" ? (
-                                    <DragHandleIcon
-                                      color="warning"
-                                      fontSize="small"
-                                    />
-                                  ) : (
-                                    <KeyboardDoubleArrowDownIcon
-                                      color="success"
-                                      fontSize="small"
-                                    />
-                                  )}
-                                </Box>
-                              </Tooltip>
-                              <Tooltip title="Edit Todo">
-                                <IconButton
-                                  onClick={() => handleEdit(todo.id)}
-                                  color="primary"
-                                >
-                                  <EditIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Del Todo">
-                                <IconButton
-                                  onClick={() => handleDelete(todo.id)}
-                                  color="error"
-                                >
-                                  <DeleteIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
+                                  <Box
+                                    px={1}
+                                    pt={1}
+                                    mr={0.5}
+                                    sx={{
+                                      background: "#fff",
+                                      borderRadius: "100px",
+                                    }}
+                                  >
+                                    {todo.priority === "High" ? (
+                                      <KeyboardDoubleArrowUpIcon
+                                        color="error"
+                                        fontSize="small"
+                                      />
+                                    ) : todo.priority === "Medium" ? (
+                                      <DragHandleIcon
+                                        color="warning"
+                                        fontSize="small"
+                                      />
+                                    ) : (
+                                      <KeyboardDoubleArrowDownIcon
+                                        color="success"
+                                        fontSize="small"
+                                      />
+                                    )}
+                                  </Box>
+                                </Tooltip>
+                                <Tooltip title="Edit Todo">
+                                  <IconButton
+                                    onClick={() => handleEdit(todo.id)}
+                                    color="primary"
+                                  >
+                                    <EditIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+                                <Tooltip title="Del Todo">
+                                  <IconButton
+                                    onClick={() => handleDelete(todo.id)}
+                                    color="error"
+                                  >
+                                    <DeleteIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+                              </Box>
                             </Box>
                           </Box>
                         </Box>
