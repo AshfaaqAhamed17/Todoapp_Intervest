@@ -3,3 +3,21 @@
 * {
   font-family: "Poppins", sans-serif !important;
 }
+
+/* For Webkit browsers (such as Chrome/Safari) */
+/* width and height are for the scrollbar track, while the background color sets the color of the scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+/* For Webkit browsers */
+/* Set scrollbar track background color to transparent by default */
+::-webkit-scrollbar {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 6px; /* Rounds the thumb */
+}

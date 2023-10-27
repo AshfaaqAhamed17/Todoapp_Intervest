@@ -3,10 +3,12 @@ import { TextField, Box, Button, Snackbar } from "@mui/material";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import MuiAlert from "@mui/material/Alert";
+import LinearProgress from "@mui/material/LinearProgress";
 
 export default function AddTodo() {
   const dispatch = useDispatch();
   const [inputText, setInputText] = useState("");
+  const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isError, setIsError] = useState(false);
@@ -19,8 +21,14 @@ export default function AddTodo() {
   };
 
   const handleSubmit = (e) => {
+    setLoading(true);
     e.preventDefault();
     console.log(inputText);
+
+    const currentDate = new Date();
+    const options = { timeZone: "Asia/Kolkata" };
+    const formattedDate = currentDate.toLocaleString("en-US", options);
+
     axios
       .post("https://jsonplaceholder.typicode.com/todos", {
         title: inputText,
@@ -28,6 +36,7 @@ export default function AddTodo() {
         completed: false,
       })
       .then((res) => {
+        setLoading(false);
         console.log(res.data.id * Math.floor(Math.random() * 1000));
 
         const data = {
@@ -35,6 +44,7 @@ export default function AddTodo() {
           title: res.data.title,
           userId: res.data.userId,
           completed: res.data.completed,
+          createdDate: formattedDate,
         };
 
         dispatch({ type: "ADD_TODO", payload: data });
@@ -46,6 +56,7 @@ export default function AddTodo() {
         localStorage.setItem("todos", JSON.stringify(todos));
       })
       .catch((err) => {
+        setLoading(false);
         console.log(err);
         setSnackbarMessage("Unable to create todo.");
         setIsError(true);
@@ -61,6 +72,11 @@ export default function AddTodo() {
 
   return (
     <>
+      {loading && (
+        <LinearProgress
+          sx={{ position: "fixed", top: 0, left: 0, width: "100vw", height: 8 }}
+        />
+      )}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={2000}
@@ -89,7 +105,6 @@ export default function AddTodo() {
             name="add_todo"
             variant="outlined"
             size="small"
-            multiline
             fullWidth
             px={2}
             value={inputText}

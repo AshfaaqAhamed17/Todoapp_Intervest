@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
-  Divider,
-  Checkbox,
   Typography,
   Dialog,
   IconButton,
@@ -12,16 +10,61 @@ import {
   DialogContentText,
   DialogTitle,
   TextField,
+  Select,
+  MenuItem,
   Snackbar,
+  InputLabel,
+  FormControlLabel,
+  Tooltip,
+  Switch,
+  FormControl,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useDispatch } from "react-redux";
 import MuiAlert from "@mui/material/Alert";
 import axios from "axios";
+import { styled } from "@mui/material/styles";
+import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
+import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
+import DragHandleIcon from "@mui/icons-material/DragHandle";
 
 export default function TodoItem({ todos }) {
+  const Android12Switch = styled(Switch)(({ theme }) => ({
+    padding: 8,
+    "& .MuiSwitch-track": {
+      borderRadius: 22 / 2,
+      "&:before, &:after": {
+        content: '""',
+        position: "absolute",
+        top: "50%",
+        transform: "translateY(-50%)",
+        width: 16,
+        height: 16,
+      },
+      "&:before": {
+        backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
+          theme.palette.getContrastText(theme.palette.primary.main)
+        )}" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>')`,
+        left: 12,
+      },
+      "&:after": {
+        backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
+          theme.palette.getContrastText(theme.palette.primary.main)
+        )}" d="M19,13H5V11H19V13Z" /></svg>')`,
+        right: 12,
+      },
+    },
+    "& .MuiSwitch-thumb": {
+      boxShadow: "none",
+      width: 16,
+      height: 16,
+      margin: 2,
+    },
+  }));
+
   const dispatch = useDispatch();
+
   const [open, setOpen] = useState(false);
   const [editedTodo, setEditedTodo] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -52,7 +95,7 @@ export default function TodoItem({ todos }) {
           todos.map((todo) =>
             todo.id === id ? { ...todo, completed: !todo.completed } : todo
           )
-        ) // todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo))
+        )
       );
     } catch (error) {
       setSnackbarMessage("Error updating todo status.");
@@ -160,6 +203,24 @@ export default function TodoItem({ todos }) {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
+
+  const formatDate = (dateString) => {
+    const [datePart, timePart] = dateString.split(", ");
+    const [formattedDateStr, amPm] = timePart.split(" ");
+    const [hours, minutes] = formattedDateStr.split(":");
+
+    console.log("formatted Date:", datePart); // Output: Date: 22/09
+    console.log("formatted Time:", `${hours}:${minutes} ${amPm}`); // Output: Time: 10:09 PM
+
+    return `${datePart} - ${hours}:${minutes} ${amPm}`;
+  };
+
+  const handlePriorityChange = (e) => {
+    setEditedTodo({
+      ...editedTodo,
+      priority: e.target.value,
+    });
+  };
   return (
     <>
       <Snackbar
@@ -178,46 +239,124 @@ export default function TodoItem({ todos }) {
         </MuiAlert>
       </Snackbar>
       {todos.length === 0 ? (
-        <Typography>No Todos</Typography>
+        <Box
+          sx={{
+            background: "#f9f9f9",
+            py: 1,
+            my: 1,
+            px: 2,
+            borderRadius: "10px",
+          }}
+        >
+          <Typography variant="h4" fontWeight={"bolder"} textAlign={"center"}>
+            No Todos
+          </Typography>
+        </Box>
       ) : (
         todos.map((todo) => (
           <>
             <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
+              sx={{
+                background: "#f9f9f9",
+                py: 1,
+                my: 1,
+                px: 2,
+                borderRadius: "10px",
+              }}
             >
-              <Box display={"flex"} alignItems="center">
-                <Checkbox
-                  checked={todo.completed}
-                  onChange={() =>
-                    handleCompletedToggle(todo.id, todo.completed)
-                  }
-                />
-                <Typography
-                  sx={{
-                    textDecoration: todo.completed ? "line-through" : "none",
-                    color: todo.completed ? "#a3a3a3" : "black",
-                    cursor: "pointer",
-                  }}
-                  variant="body2"
-                  onClick={() => handleCompletedToggle(todo.id, todo.completed)}
-                >
-                  {todo.title}
-                </Typography>
-              </Box>
-              <Box display="flex" alignItems="center">
-                <IconButton onClick={() => handleDelete(todo.id)} color="error">
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-                <IconButton onClick={() => handleEdit(todo.id)} color="primary">
-                  <EditIcon fontSize="small" />
-                </IconButton>
+              <Typography
+                variant="caption"
+                sx={{ color: "gray", px: { xs: 1, lg: 2 } }}
+                fontWeight={"bolder"}
+              >
+                {todo.createdDate
+                  ? formatDate(todo.createdDate)
+                  : "22/09/2023 - 10.09 PM"}
+              </Typography>
+              <Box
+                display="flex"
+                alignItems="start"
+                justifyContent="space-between"
+              >
+                <Box display={"flex"} alignItems="start">
+                  <Tooltip
+                    title={todo.completed ? "Task Complete" : "Task Incomplete"}
+                  >
+                    <FormControlLabel
+                      control={<Android12Switch />}
+                      checked={todo.completed}
+                      sx={{ ml: 0.5 }}
+                      onChange={() =>
+                        handleCompletedToggle(todo.id, todo.completed)
+                      }
+                    />
+                  </Tooltip>
+                  <Typography
+                    sx={{
+                      textDecoration: todo.completed ? "line-through" : "none",
+                      color: todo.completed ? "#a3a3a3" : "black",
+                      cursor: "pointer",
+                      mt: 1,
+                    }}
+                    variant="body2"
+                    onClick={() =>
+                      handleCompletedToggle(todo.id, todo.completed)
+                    }
+                  >
+                    {todo.title}
+                  </Typography>
+                </Box>
+
+                <Box display="flex" alignItems="center">
+                  <Tooltip
+                    title={
+                      todo.priority === "High"
+                        ? "High Priority"
+                        : todo.priority === "Medium"
+                        ? "Medium Priority"
+                        : "Low Priority"
+                    }
+                  >
+                    <Box
+                      px={1}
+                      pt={1}
+                      mr={0.5}
+                      sx={{ background: "#fff", borderRadius: "100px" }}
+                    >
+                      {todo.priority === "High" ? (
+                        <KeyboardDoubleArrowUpIcon
+                          color="error"
+                          fontSize="small"
+                        />
+                      ) : todo.priority === "Medium" ? (
+                        <DragHandleIcon color="warning" fontSize="small" />
+                      ) : (
+                        <KeyboardDoubleArrowDownIcon
+                          color="success"
+                          fontSize="small"
+                        />
+                      )}
+                    </Box>
+                  </Tooltip>
+                  <Tooltip title="Edit Todo">
+                    <IconButton
+                      onClick={() => handleEdit(todo.id)}
+                      color="primary"
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Del Todo">
+                    <IconButton
+                      onClick={() => handleDelete(todo.id)}
+                      color="error"
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
               </Box>
             </Box>
-            {todo.id !== todos[todos.length - 1].id && (
-              <Divider sx={{ my: 2 }} />
-            )}
           </>
         ))
       )}
@@ -231,13 +370,27 @@ export default function TodoItem({ todos }) {
               fullWidth
               autoFocus
               variant="outlined"
+              value={editedTodo ? editedTodo.title : ""}
               multiline
               label="Edit Todo"
-              value={editedTodo ? editedTodo.title : ""}
               onChange={(e) =>
                 setEditedTodo({ ...editedTodo, title: e.target.value })
               }
             />
+            <FormControl fullWidth sx={{ mt: 3 }}>
+              <InputLabel id="demo-select-small-label">Priority</InputLabel>
+              <Select
+                labelId="demo-select-small-label"
+                id="demo-select-small"
+                label="Priority"
+                value={editedTodo ? editedTodo.priority : "Low"}
+                onChange={handlePriorityChange}
+              >
+                <MenuItem value={"High"}>High</MenuItem>
+                <MenuItem value={"Medium"}>Medium</MenuItem>
+                <MenuItem value={"Low"}>Low</MenuItem>
+              </Select>
+            </FormControl>
           </DialogContentText>
         </DialogContent>
         <DialogActions>

@@ -11,7 +11,6 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // Check if todos exist in local storage
     const storedTodos = JSON.parse(localStorage.getItem("todos"));
     if (storedTodos) {
       dispatch(fetchTodo(storedTodos));
@@ -22,6 +21,11 @@ function App() {
         .then((res) => {
           console.log(res.data);
           dispatch(fetchTodo(res.data));
+          res.data.forEach((todo) => {
+            todo.priority = "low";
+          });
+          console.log("res.data", res.data);
+
           localStorage.setItem("todos", JSON.stringify(res.data));
           setLoading(false);
         })
@@ -49,7 +53,7 @@ function App() {
         <>
           <Box
             sx={{
-              width: "50%",
+              width: { xs: "100%", lg: "60%" },
               margin: "auto",
             }}
           >
