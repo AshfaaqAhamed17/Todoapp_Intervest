@@ -1,70 +1,66 @@
-# Getting Started with Create React App
+# TODO LIST Application Documentation
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
+This is a simple TODO application built using React.js and Redux for state management. It allows users to add, update, and delete TODO items. The application uses local storage for data persistence and Material-UI components for a responsive user interface.
 
-In the project directory, you can run:
+## Key Features
 
-### `npm start`
+- **Task Management**: Users can add, edit, and delete tasks effortlessly, tailoring their to-do list to their specific needs.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Task Status**: Tasks can be marked as complete or incomplete, providing a quick visual indication of their status.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Filtering**: Users can filter tasks based on their status (complete or incomplete) to focus on specific subsets of tasks.
 
-### `npm test`
+- **Priority Levels**: Tasks can be assigned priority levels, allowing users to categorize tasks based on their importance or urgency.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Sorting and Reordering**: Tasks can be sorted and reordered according to the user's preference, enabling flexible organization of the task list.
 
-### `npm run build`
+- **Task Count Display**: The application displays the count of different tasks (complete, incomplete, etc.) at the top of the page, providing users with an overview of their task distribution.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+This application offers a user-friendly interface and robust functionality, empowering users to stay organized and productive.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Project Structure
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **App.js**: Main component for rendering the application.
+- **MyTodoList.js**: Contains components related to TODO management.
+  - **AddTodo.js**: Component for adding new TODO items.
+  - **TodoItem.js**: Component for displaying and editing individual TODO items.
+  - **CountCard.js**: Component for displaying the number of TODO items.
+- **reducer/todoReducer.js**: Redux reducer file for managing TODO state.
+- **actions/todoActions.js**: Redux action creators for performing CRUD operations on TODO items.
+- **store.js**: Redux store configuration.
 
-### `npm run eject`
+## Redux State Management
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+The application uses Redux for managing state. The state is initialized with TODO items fetched from local storage, or an empty array if no items are present. The following actions are supported:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- **FETCH_TODO**: Fetches TODO items and updates the state.
+- **ADD_TODO**: Adds a new TODO item to the state.
+- **UPDATE_TODO**: Updates an existing TODO item.
+- **DELETE_TODO**: Deletes a TODO item from the state.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Local Storage
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+TODO items are stored in the local storage of the browser. This enables data persistence even after the user refreshes the page or closes the browser.
 
-## Learn More
+## Styling
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Material-UI components and styling are used to create an intuitive and responsive user interface. The application is designed to be user-friendly and visually appealing across different devices and screen sizes.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Steps to run the React project on your local machine:
 
-### Code Splitting
+- Node version -- 18.x
+- npm version -- 9.x
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#### 1. Clone the project.
 
-### Analyzing the Bundle Size
+#### 2. > npm install
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#### 3. > npm start
 
-### Making a Progressive Web App
+#### 4. Open your web browser and visit http://localhost:3000 to use the application.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Test Cases
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+#### > npm test
