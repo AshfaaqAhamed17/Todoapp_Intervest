@@ -21,18 +21,19 @@ export default function MyTodoList() {
   };
 
   const filteredTodos = todos.filter((todo) => {
-    if (filter === "Completed") {
-      return todo.completed === true;
-    } else if (filter === "Active") {
-      return todo.completed === false;
-    } else if (filter === "High") {
-      return todo.priority === "High";
-    } else if (filter === "Medium") {
-      return todo.priority === "Medium";
-    } else if (filter === "Low") {
-      return todo.priority === "Low";
-    } else {
-      return todo;
+    switch (filter) {
+      case "Completed":
+        return todo.completed === true;
+      case "Active":
+        return todo.completed === false;
+      case "High":
+        return todo.priority === "High";
+      case "Medium":
+        return todo.priority === "Medium";
+      case "Low":
+        return todo.priority === "Low";
+      default:
+        return todo;
     }
   });
 
@@ -76,6 +77,7 @@ export default function MyTodoList() {
           onChange={handleFilterChange}
           labelId="filter-select-label"
           id="filter-select"
+          data-testid="todo-filter-select"
           value={filter}
           size="small"
           color="primary"

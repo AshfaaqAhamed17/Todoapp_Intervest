@@ -34,7 +34,7 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
 export default function TodoItem({ todos, filter }) {
-  const Android12Switch = styled(Switch)(({ theme }) => ({
+  const TodoToggleSwitch = styled(Switch)(({ theme }) => ({
     padding: 8,
     "& .MuiSwitch-track": {
       borderRadius: 22 / 2,
@@ -351,7 +351,7 @@ export default function TodoItem({ todos, filter }) {
                                   }
                                 >
                                   <FormControlLabel
-                                    control={<Android12Switch />}
+                                    control={<TodoToggleSwitch />}
                                     checked={todo.completed}
                                     sx={{ ml: 0.5 }}
                                     onChange={() =>

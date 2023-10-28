@@ -17,7 +17,7 @@ function App() {
       setLoading(false);
     } else {
       todoService
-        .getTodo()
+        .getTodo(5)
         .then((res) => {
           console.log(res.data);
           res.data.forEach((todo) => {

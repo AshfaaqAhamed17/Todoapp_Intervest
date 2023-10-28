@@ -1,7 +1,7 @@
 import api from "./api";
 
-const getTodo = () => {
-  return api.get(`/todos?_limit=5`);
+const getTodo = (limit) => {
+  return api.get(`/todos?_limit=${limit}`);
 };
 
 const addTodo = async (todo) => {
@@ -52,11 +52,3 @@ const todoService = {
 };
 
 export default todoService;
-
-// Compare this snippet from src/redux/actions/todoAction.js:
-// import todoApi from "../../services/todoService";
-//
-// export const fetchTodo = () => async (dispatch) => {
-//   const response = await todoApi.getTodo();
-//   dispatch({ type: "FETCH_TODO", payload: response.data });
-// };

@@ -1,4 +1,3 @@
-// todo reducer addTodo, updateTodo, deleteTodo
 const storedTodos = JSON.parse(localStorage.getItem("todos")) || [];
 
 const initialState = {
