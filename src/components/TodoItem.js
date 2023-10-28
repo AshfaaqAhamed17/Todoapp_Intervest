@@ -17,13 +17,14 @@ import {
   FormControlLabel,
   Tooltip,
   Switch,
+  LinearProgress,
   FormControl,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useDispatch } from "react-redux";
 import MuiAlert from "@mui/material/Alert";
-import axios from "axios";
+import todoService from "../services/todoService";
 import { styled } from "@mui/material/styles";
 import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
@@ -32,7 +33,7 @@ import { fetchTodo } from "../redux/action/todoAction";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
-export default function TodoItem({ todos }) {
+export default function TodoItem({ todos, filter }) {
   const Android12Switch = styled(Switch)(({ theme }) => ({
     padding: 8,
     "& .MuiSwitch-track": {
@@ -72,6 +73,7 @@ export default function TodoItem({ todos }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleCompletedToggle = (id, completed) => {
     const todoToUpdate = todos.find((todo) => todo.id === id);
@@ -108,6 +110,7 @@ export default function TodoItem({ todos }) {
 
   const handleDelete = (id) => {
     console.log("id", id);
+    setLoading(true);
     const todoToDelete = todos.find((todo) => todo.id === id);
     if (!todoToDelete) {
       setSnackbarMessage("Todo not found. Unable to delete.");
@@ -115,33 +118,27 @@ export default function TodoItem({ todos }) {
       setSnackbarOpen(true);
       return;
     }
-
-    try {
-      axios
-        .delete(`https://jsonplaceholder.typicode.com/todos/${id}`)
-        .then((res) => {
-          console.log(res.data);
-          dispatch({ type: "DELETE_TODO", payload: id });
-          localStorage.setItem(
-            "todos",
-            JSON.stringify(todos.filter((todo) => todo.id !== id))
-          );
-          setSnackbarMessage("Todo deleted successfully!");
-          setIsError(false);
-          setSnackbarOpen(true);
-        })
-        .catch((err) => {
-          console.log(err);
-          setSnackbarMessage("Error deleting todo. 111");
-          setIsError(true);
-          setSnackbarOpen(true);
-        });
-    } catch (error) {
-      console.log(error);
-      setSnackbarMessage("Error deleting todo. 222");
-      setIsError(true);
-      setSnackbarOpen(true);
-    }
+    todoService
+      .deleteTodo(id)
+      .then((res) => {
+        console.log(res);
+        setLoading(false);
+        dispatch({ type: "DELETE_TODO", payload: id });
+        localStorage.setItem(
+          "todos",
+          JSON.stringify(todos.filter((todo) => todo.id !== id))
+        );
+        setSnackbarMessage("Todo deleted successfully!");
+        setIsError(false);
+        setSnackbarOpen(true);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+        setSnackbarMessage("Error deleting todo. 111");
+        setIsError(true);
+        setSnackbarOpen(true);
+      });
   };
 
   const handleEdit = (id) => {
@@ -157,52 +154,56 @@ export default function TodoItem({ todos }) {
   };
 
   const handleSaveEdit = () => {
-    /**
-     *     try {
-      axios
-        .put(`https://jsonplaceholder.typicode.com/todos/${editedTodo.id}`, {
-          title: editedTodo.title,
-          completed: editedTodo.completed,
-        })
-        .then((res) => {
-          console.log(res.data);
-          dispatch({ type: "UPDATE_TODO", payload: res.data });
+    setLoading(true);
+    todoService
+      .updateTodo(editedTodo.id, editedTodo)
+      .then((res) => {
+        console.log(res);
+        setLoading(false);
+        dispatch({ type: "UPDATE_TODO", payload: editedTodo });
+        localStorage.setItem(
+          "todos",
+          JSON.stringify(
+            todos.map((todo) => (todo.id === editedTodo.id ? editedTodo : todo))
+          )
+        );
+        setSnackbarMessage("Todo edited successfully!");
+        setIsError(false);
+        setSnackbarOpen(true);
+        setOpen(false);
+        setEditedTodo(null);
+      })
+      .catch((err) => {
+        console.error(err);
+
+        try {
+          dispatch({ type: "UPDATE_TODO", payload: editedTodo });
+          localStorage.setItem(
+            "todos",
+            JSON.stringify(
+              todos.map((todo) =>
+                todo.id === editedTodo.id ? editedTodo : todo
+              )
+            )
+          );
+          setLoading(false);
           setSnackbarMessage("Todo edited successfully!");
           setIsError(false);
           setSnackbarOpen(true);
           setOpen(false);
           setEditedTodo(null);
-        })
-        .catch((err) => {
-          console.log(err);
-          setSnackbarMessage("Error saving edited todo.");
+        } catch (error) {
+          console.error(error);
+          setLoading(false);
+          setSnackbarMessage(
+            "Error saving edited todo. Please try again later."
+          );
           setIsError(true);
           setSnackbarOpen(true);
-        });
-    } catch (error) {
-      setSnackbarMessage("Error saving edited todo.");
-      setIsError(true);
-      setSnackbarOpen(true);
-    }
-     */
-    try {
-      dispatch({ type: "UPDATE_TODO", payload: editedTodo });
-      localStorage.setItem(
-        "todos",
-        JSON.stringify(
-          todos.map((todo) => (todo.id === editedTodo.id ? editedTodo : todo))
-        )
-      );
-      setSnackbarMessage("Todo edited successfully!");
-      setIsError(false);
-      setSnackbarOpen(true);
-      setOpen(false);
-      setEditedTodo(null);
-    } catch (error) {
-      setSnackbarMessage("Error saving edited todo.");
-      setIsError(true);
-      setSnackbarOpen(true);
-    }
+          setOpen(false);
+          setEditedTodo(null);
+        }
+      });
   };
 
   const handleSnackbarClose = () => {
@@ -226,8 +227,26 @@ export default function TodoItem({ todos }) {
       priority: e.target.value,
     });
   };
+
+  const reorderTodos = (params) => {
+    const sourceIndex = params.source.index;
+    const destinationIndex = params.destination?.index;
+    if (destinationIndex) {
+      const reorderTodos = [...todos];
+      const [removed] = reorderTodos.splice(sourceIndex, 1);
+      reorderTodos.splice(destinationIndex, 0, removed);
+      dispatch(fetchTodo(reorderTodos));
+      localStorage.setItem("todos", JSON.stringify(reorderTodos));
+    }
+  };
+
   return (
     <>
+      {loading && (
+        <LinearProgress
+          sx={{ position: "fixed", top: 0, left: 0, width: "100vw", height: 8 }}
+        />
+      )}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={2000}
@@ -259,19 +278,7 @@ export default function TodoItem({ todos }) {
         </Box>
       ) : (
         <>
-          <DragDropContext
-            onDragEnd={(params) => {
-              const sourceIndex = params.source.index;
-              const destinationIndex = params.destination?.index;
-              if (destinationIndex) {
-                const reorderTodos = [...todos];
-                const [removed] = reorderTodos.splice(sourceIndex, 1);
-                reorderTodos.splice(destinationIndex, 0, removed);
-                dispatch(fetchTodo(reorderTodos));
-                localStorage.setItem("todos", JSON.stringify(reorderTodos));
-              }
-            }}
-          >
+          <DragDropContext onDragEnd={reorderTodos}>
             <Droppable droppableId="todo-1">
               {(provided, _) => (
                 <Box ref={provided.innerRef} {...provided.droppableProps}>
@@ -284,9 +291,13 @@ export default function TodoItem({ todos }) {
                       {(provided, snapshot) => (
                         <Box
                           display="flex"
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
+                          {...(filter === "All"
+                            ? {
+                                ref: provided.innerRef,
+                                ...provided.draggableProps,
+                                ...provided.dragHandleProps,
+                              }
+                            : {})}
                           sx={{
                             background: "#f9f9f9",
                             py: 1,
@@ -301,10 +312,22 @@ export default function TodoItem({ todos }) {
                               : "none",
                           }}
                         >
-                          <Box margin={"auto 0"}>
-                            <DragIndicatorIcon fontSize="small" />
-                          </Box>
-                          <Box display={"block"} width={"100%"}>
+                          {filter === "All" && (
+                            <Box margin={"auto 0"}>
+                              <DragIndicatorIcon
+                                fontSize="small"
+                                sx={{
+                                  color: "gray",
+                                  transform: `rotate(90deg) ${
+                                    snapshot.isDragging
+                                      ? "scale(1.2)"
+                                      : "scale(1)"
+                                  }`,
+                                }}
+                              />
+                            </Box>
+                          )}
+                          <Box width={"100%"}>
                             <Typography
                               variant="caption"
                               sx={{ color: "gray", px: { xs: 1, lg: 2 } }}
@@ -405,7 +428,7 @@ export default function TodoItem({ todos }) {
                                     <EditIcon fontSize="small" />
                                   </IconButton>
                                 </Tooltip>
-                                <Tooltip title="Del Todo">
+                                <Tooltip title="Delete Todo">
                                   <IconButton
                                     onClick={() => handleDelete(todo.id)}
                                     color="error"
@@ -429,6 +452,17 @@ export default function TodoItem({ todos }) {
       )}
 
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        {loading && (
+          <LinearProgress
+            sx={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: 8,
+            }}
+          />
+        )}
         <DialogTitle>Edit Todo</DialogTitle>
         <DialogContent>
           <DialogContentText>

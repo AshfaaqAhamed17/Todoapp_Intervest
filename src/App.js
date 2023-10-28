@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
-import axios from "axios";
 import MyTodoList from "./components/MyTodoList";
 import { useDispatch } from "react-redux";
 import { fetchTodo } from "./redux/action/todoAction";
+import todoService from "./services/todoService";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -16,8 +16,8 @@ function App() {
       dispatch(fetchTodo(storedTodos));
       setLoading(false);
     } else {
-      axios
-        .get("https://jsonplaceholder.typicode.com/todos?_limit=5")
+      todoService
+        .getTodo()
         .then((res) => {
           console.log(res.data);
           res.data.forEach((todo) => {

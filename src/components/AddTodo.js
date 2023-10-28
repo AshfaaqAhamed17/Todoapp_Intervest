@@ -1,7 +1,7 @@
 import React, { useState } from "react";
+import todoService from "../services/todoService";
 import { TextField, Box, Button, Snackbar } from "@mui/material";
 import { useDispatch } from "react-redux";
-import axios from "axios";
 import MuiAlert from "@mui/material/Alert";
 import LinearProgress from "@mui/material/LinearProgress";
 
@@ -29,24 +29,26 @@ export default function AddTodo() {
     const options = { timeZone: "Asia/Kolkata" };
     const formattedDate = currentDate.toLocaleString("en-US", options);
 
-    axios
-      .post("https://jsonplaceholder.typicode.com/todos", {
+    todoService
+      .addTodo({
         title: inputText,
         userId: 11,
         completed: false,
+        priority: "Low",
+        createdDate: formattedDate,
       })
       .then((res) => {
+        console.log("res", res);
         setLoading(false);
-        console.log(res.data.id * Math.floor(Math.random() * 1000));
 
         const data = {
-          id: res.data.id * Math.floor(Math.random() * 1000),
-          title: res.data.title,
-          userId: res.data.userId,
-          completed: res.data.completed,
-          createdDate: formattedDate,
+          id: res.id * Math.floor(Math.random() * 1000),
+          title: res.title,
+          userId: res.userId,
+          completed: res.completed,
+          createdDate: res.createdDate,
+          priority: res.priority,
         };
-
         dispatch({ type: "ADD_TODO", payload: data });
         setSnackbarMessage("Todo created successfully!");
         setIsError(false);
@@ -62,7 +64,6 @@ export default function AddTodo() {
         setIsError(true);
         setSnackbarOpen(true);
       });
-
     setInputText("");
   };
 

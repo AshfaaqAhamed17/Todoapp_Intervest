@@ -99,7 +99,7 @@ export default function MyTodoList() {
           overflowY: "scroll",
         }}
       >
-        <TodoItem todos={filteredTodos} />
+        <TodoItem todos={filteredTodos} filter={filter} />
       </Box>
     </>
   );
