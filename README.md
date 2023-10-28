@@ -23,10 +23,10 @@ This application offers a user-friendly interface and robust functionality, empo
 ## Project Structure
 
 - **App.js**: Main component for rendering the application.
-- **MyTodoList.js**: Contains components related to TODO management.
-  - **AddTodo.js**: Component for adding new TODO items.
-  - **TodoItem.js**: Component for displaying and editing individual TODO items.
-  - **CountCard.js**: Component for displaying the number of TODO items.
+  - **MyTodoList.js**: Contains components related to TODO management.
+    - **AddTodo.js**: Component for adding new TODO items.
+    - **TodoItem.js**: Component for displaying and editing individual TODO items.
+    - **CountCard.js**: Component for displaying the number of TODO items.
 - **reducer/todoReducer.js**: Redux reducer file for managing TODO state.
 - **actions/todoActions.js**: Redux action creators for performing CRUD operations on TODO items.
 - **store.js**: Redux store configuration.
