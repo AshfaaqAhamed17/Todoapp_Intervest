@@ -35,10 +35,18 @@ This application offers a user-friendly interface and robust functionality, empo
 
 The application uses Redux for managing state. The state is initialized with TODO items fetched from local storage, or an empty array if no items are present. The following actions are supported:
 
-- **FETCH_TODO**: Fetches TODO items and updates the state.
-- **ADD_TODO**: Adds a new TODO item to the state.
-- **UPDATE_TODO**: Updates an existing TODO item.
-- **DELETE_TODO**: Deletes a TODO item from the state.
+- **State Management**: Redux Toolkit is used to manage the application's state centrally. The state includes information about tasks, their status (complete or incomplete), and their priority levels
+
+- **Action Handling**: It streamlines the handling of actions such as adding, updating, and deleting tasks, making the codebase concise and readable.
+
+  - **FETCH_TODO**: Fetches TODO items and updates the state.
+  - **ADD_TODO**: Adds a new TODO item to the state.
+  - **UPDATE_TODO**: Updates an existing TODO item.
+  - **DELETE_TODO**: Deletes a TODO item from the state.
+
+- **Immutable Updates**: Redux Toolkit ensures that state updates are performed immutably. It encourages the use of immutable techniques to update state, which ensures data consistency and helps prevent unintended side effects.
+
+- **Redux Store Configuration**: Redux Toolkit's configureStore function is used to set up the Redux store with the defined reducer.
 
 ## Local Storage
 
