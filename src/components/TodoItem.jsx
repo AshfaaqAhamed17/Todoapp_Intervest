@@ -109,7 +109,6 @@ export default function TodoItem({ todos, filter }) {
   };
 
   const handleDelete = (id) => {
-    console.log("id", id);
     setLoading(true);
     const todoToDelete = todos.find((todo) => todo.id === id);
     if (!todoToDelete) {
@@ -121,7 +120,6 @@ export default function TodoItem({ todos, filter }) {
     todoService
       .deleteTodo(id)
       .then((res) => {
-        console.log(res);
         setLoading(false);
         dispatch({ type: "DELETE_TODO", payload: id });
         localStorage.setItem(
@@ -133,7 +131,6 @@ export default function TodoItem({ todos, filter }) {
         setSnackbarOpen(true);
       })
       .catch((err) => {
-        console.log(err);
         setLoading(false);
         setSnackbarMessage("Error deleting todo. 111");
         setIsError(true);
@@ -143,7 +140,6 @@ export default function TodoItem({ todos, filter }) {
 
   const handleEdit = (id) => {
     const todoToEdit = todos.find((todo) => todo.id === id);
-    console.log("todoToEdit", todoToEdit);
     setEditedTodo(todoToEdit);
     setOpen(true);
   };
@@ -158,7 +154,6 @@ export default function TodoItem({ todos, filter }) {
     todoService
       .updateTodo(editedTodo.id, editedTodo)
       .then((res) => {
-        console.log(res);
         setLoading(false);
         dispatch({ type: "UPDATE_TODO", payload: editedTodo });
         localStorage.setItem(
@@ -214,10 +209,6 @@ export default function TodoItem({ todos, filter }) {
     const [datePart, timePart] = dateString.split(", ");
     const [formattedDateStr, amPm] = timePart.split(" ");
     const [hours, minutes] = formattedDateStr.split(":");
-
-    console.log("formatted Date:", datePart); // Output: Date: 22/09
-    console.log("formatted Time:", `${hours}:${minutes} ${amPm}`); // Output: Time: 10:09 PM
-
     return `${datePart} - ${hours}:${minutes} ${amPm}`;
   };
 

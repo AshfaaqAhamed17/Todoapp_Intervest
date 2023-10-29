@@ -10,13 +10,9 @@ import CountCard from "./CountCard";
 
 export default function MyTodoList() {
   const todos = useSelector((state) => state.todoReducer.todos);
-  const todos1 = JSON.parse(localStorage.getItem("todos"));
-  console.log("todos", todos);
-  console.log("todos 1", todos1);
 
   const [filter, setFilter] = useState("All");
   const handleFilterChange = (e) => {
-    console.log(e.target.value);
     setFilter(e.target.value);
   };
 

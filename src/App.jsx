@@ -19,11 +19,9 @@ function App() {
       todoService
         .getTodo(5)
         .then((res) => {
-          console.log(res.data);
           res.data.forEach((todo) => {
             todo.priority = "Low";
           });
-          console.log("res.data", res.data);
           dispatch(fetchTodo(res.data));
           localStorage.setItem("todos", JSON.stringify(res.data));
           setLoading(false);

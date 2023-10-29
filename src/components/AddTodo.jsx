@@ -16,14 +16,12 @@ export default function AddTodo() {
 
   const handleInputChange = (e) => {
     e.preventDefault();
-    console.log(e.target.value);
     setInputText(e.target.value);
   };
 
   const handleSubmit = (e) => {
     setLoading(true);
     e.preventDefault();
-    console.log(inputText);
 
     const currentDate = new Date();
     const options = { timeZone: "Asia/Kolkata" };
@@ -38,7 +36,6 @@ export default function AddTodo() {
         createdDate: formattedDate,
       })
       .then((res) => {
-        console.log("res", res);
         setLoading(false);
 
         const data = {
@@ -59,7 +56,6 @@ export default function AddTodo() {
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err);
         setSnackbarMessage("Unable to create todo.");
         setIsError(true);
         setSnackbarOpen(true);
